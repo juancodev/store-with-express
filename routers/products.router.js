@@ -1,23 +1,11 @@
 const express = require('express');
-const {
-  faker
-} = require('@faker-js/faker');
+const ProductsServices = require('../services/products.services');
 
 const router = express.Router();
+const service = new ProductsServices();
 
 router.get('/', (request, response) => {
-  const {
-    size
-  } = request.query;
-  const limit = size || 10;
-  const products = []
-  for (let i = 0; i < limit; i++) {
-    products.push({
-      name: faker.commerce.productName(),
-      price: faker.commerce.price(),
-      image: faker.image.image()
-    })
-  }
+  const products = service.find();
   response.json(products);
 });
 
@@ -31,19 +19,14 @@ router.get('/:id', (request, response) => {
   const {
     id
   } = request.params
-  response.json({
-    id,
-    name: 'Product 1',
-    price: 1000
-  })
+  const product = service.findOnlyOne(id);
+  response.json(product);
 });
 
 router.post('/', (request, response) => {
   const body = request.body;
-  response.status(201).json({
-    message: "Created",
-    data: body
-  });
+  const newProduct = service.created(body);
+  response.status(201).json(newProduct);
 });
 
 router.put('/:id', (request, response) => {
@@ -51,11 +34,8 @@ router.put('/:id', (request, response) => {
     id
   } = request.params;
   const body = request.body;
-  response.json({
-    id,
-    message: "Change product update",
-    data: body
-  });
+  const product = service.update(id, body);
+  response.json(product);
 });
 
 router.patch('/:id', (request, response) => {
@@ -63,21 +43,16 @@ router.patch('/:id', (request, response) => {
     id
   } = request.params;
   const body = request.body;
-  response.json({
-    id,
-    message: "Change product update",
-    data: body
-  });
+  const product = service.update(id, body);
+  response.json(product);
 });
 
 router.delete('/:id', (request, response) => {
   const {
     id
   } = request.params;
-  response.json({
-    id,
-    message: "Deleted Product Successfully"
-  })
-})
+  const result = service.delete(id);
+  response.json(result);
+});
 
 module.exports = router;
