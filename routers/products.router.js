@@ -14,13 +14,17 @@ router.get('/filter', (request, response) => {
   response.send('This is a filter');
 });
 
-router.get('/:id', async (request, response) => {
+router.get('/:id', async (request, response, next) => {
   // const id = request.params.id;
-  const {
-    id
-  } = request.params
-  const product = await service.findOnlyOne(id);
-  response.json(product);
+  try {
+    const {
+      id
+    } = request.params
+    const product = await service.findOnlyOne(id);
+    response.json(product);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post('/', async (request, response) => {
@@ -38,13 +42,17 @@ router.put('/:id', async (request, response) => {
   response.json(product);
 });
 
-router.patch('/:id', async (request, response) => {
-  const {
-    id
-  } = request.params;
-  const body = request.body;
-  const product = await service.update(id, body);
-  response.json(product);
+router.patch('/:id', async (request, response, next) => {
+  try {
+    const {
+      id
+    } = request.params;
+    const body = request.body;
+    const product = await service.update(id, body);
+    response.json(product);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.delete('/:id', async (request, response) => {
