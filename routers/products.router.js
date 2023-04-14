@@ -4,8 +4,8 @@ const ProductsServices = require('../services/products.services');
 const router = express.Router();
 const service = new ProductsServices();
 
-router.get('/', (request, response) => {
-  const products = service.find();
+router.get('/', async (request, response) => {
+  const products = await service.find();
   response.json(products);
 });
 
@@ -14,45 +14,51 @@ router.get('/filter', (request, response) => {
   response.send('This is a filter');
 });
 
-router.get('/:id', (request, response) => {
+router.get('/:id', async (request, response) => {
   // const id = request.params.id;
   const {
     id
   } = request.params
-  const product = service.findOnlyOne(id);
+  const product = await service.findOnlyOne(id);
   response.json(product);
 });
 
-router.post('/', (request, response) => {
+router.post('/', async (request, response) => {
   const body = request.body;
-  const newProduct = service.created(body);
+  const newProduct = await service.created(body);
   response.status(201).json(newProduct);
 });
 
-router.put('/:id', (request, response) => {
+router.put('/:id', async (request, response) => {
   const {
     id
   } = request.params;
   const body = request.body;
-  const product = service.update(id, body);
+  const product = await service.update(id, body);
   response.json(product);
 });
 
-router.patch('/:id', (request, response) => {
+router.patch('/:id', async (request, response) => {
   const {
     id
   } = request.params;
   const body = request.body;
-  const product = service.update(id, body);
+  const product = await service.update(id, body);
   response.json(product);
 });
 
-router.delete('/:id', (request, response) => {
-  const {
-    id
-  } = request.params;
-  const result = service.delete(id);
-  response.json(result);
+router.delete('/:id', async (request, response) => {
+  try {
+    const {
+      id
+    } = request.params;
+    const result = await service.delete(id);
+    response.json(result);
+  } catch (error) {
+    response.status(404).json({
+      message: error.message
+    });
+  };
 });
 
 module.exports = router;
