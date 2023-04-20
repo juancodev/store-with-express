@@ -1,5 +1,6 @@
 const express = require('express');
 const routerAPI = require('./routers/index');
+const cors = require('cors');
 const {
   logError,
   errorHandle,
@@ -17,6 +18,24 @@ app.get('/', (request, response) => {
 
 routerAPI(app);
 
+/*
+  With constrain
+
+ const whiteList = ['http://localhost:8080/', 'https://myapp.com'];
+ const options = {
+   origin: (origin, callback) => {
+     if (whiteList.includes(origin) || !origin) {
+       callback(null, true);
+     } else {
+       callback(new Error('badRequest'));
+     };
+   }
+ };
+
+ app.use(cors(options));
+*/
+
+app.use(cors);
 app.use(logError);
 app.use(boomErrorHandle);
 app.use(errorHandle);
